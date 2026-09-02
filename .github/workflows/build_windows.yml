@@ -2,9 +2,12 @@ name: Build Windows 10/11 Executable
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  PYTHONIOENCODING: utf-8
 
 jobs:
   build-windows:

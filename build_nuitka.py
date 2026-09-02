@@ -12,6 +12,14 @@ import subprocess
 import zipfile
 from pathlib import Path
 
+# Fix Windows cp1252 charmap encoding crash when printing Unicode/emojis
+if sys.platform == "win32":
+    import io
+    if hasattr(sys.stdout, "buffer"):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, "buffer"):
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
 PROJECT_DIR = Path(__file__).resolve().parent
 
 # Cross-platform python executable detection (Central Linux venv or system python / Windows runner)
@@ -28,7 +36,6 @@ DIST_DIR    = PROJECT_DIR / "dist"
 APP_NAME    = "CelSuite Art Studio"
 
 # Prune unneeded standard libraries and unused Qt components to minimize binary size
-# Note: PyTorch, Diffusers, and Transformers are kept intact!
 EXCLUDE_MODULES = [
     "tkinter", "unittest", "pydoc", "doctest", "email", "http", "xmlrpc",
     "distutils", "setuptools", "pip", "pkg_resources", "curses", "idlelib",
@@ -105,7 +112,6 @@ def build(target="onefile"):
         if target == "standalone":
             standalone_folder = DIST_DIR / f"CelSuite_ArtStudio.dist"
             if not standalone_folder.exists():
-                # Fallback check for alternate Nuitka folder naming
                 candidates = list(DIST_DIR.glob("*.dist"))
                 if candidates:
                     standalone_folder = candidates[0]

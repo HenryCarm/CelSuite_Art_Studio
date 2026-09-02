@@ -9,9 +9,12 @@ on:
 permissions:
   contents: write
 
+env:
+  PYTHONIOENCODING: utf-8
+
 jobs:
   build:
-    name: Build ${{ matrix.os-name }} (${{ matrix.target }})
+    name: Build ${{ matrix.os-name }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,12 +22,8 @@ jobs:
         include:
           - os: ubuntu-latest
             os-name: Linux
-            target: both
-            artifact-ext: ""
           - os: windows-latest
             os-name: Windows
-            target: both
-            artifact-ext: ".exe"
 
     steps:
       - name: Checkout repository
