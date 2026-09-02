@@ -1,0 +1,45 @@
+name: Build Windows 10/11 Executable
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Visual Studio C++ Compiler
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka zstandard
+
+      - name: Build Windows Standalone & OneFile with Nuitka
+        run: |
+          python build_nuitka.py --run=both
+
+      - name: Create Zip Archive of Windows Build
+        run: |
+          Compress-Archive -Path dist/* -DestinationPath CelSuite_ArtStudio_Windows.zip
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CelSuite-ArtStudio-Windows
+          path: CelSuite_ArtStudio_Windows.zip
+          retention-days: 14

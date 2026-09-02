@@ -1,0 +1,20 @@
+{
+  "model_path": "/home/henry/Documents/Projects/Python/MyScreen OfflineImageGenerator/NEWtfmCutesyAnime2_genesis.safetensors",
+  "dolphin_path": "",
+  "lora_path": "",
+  "pos_prompt": "half naked, 1girl, realistic, photorealistic, nude, raw photo, high quality, highly detailed skin, detailed pores, highly detailed eyes, cute face, young adult, Gen-Z style, wearing a cute oversized off-shoulder sweater, messy bun, looking at viewer, blushing, shy smile, soft lips, flustered, depth of field, soft natural lighting",
+  "sticky_prompt": "masterpiece, best quality, ultra-detailed, highres, 8k resolution, cinematic lighting, soft lighting, bokeh, professional photography, sharp focus, seductive, boobs",
+  "neg_prompt": "worst quality, low quality, normal quality, ugly, blurry, mutated, poorly drawn, extra limbs, bad anatomy, missing fingers, jpeg artifacts, watermark, signature, anime, cartoon, drawing, illustration, 3d, render, cgi, deformed, distorted, plastic skin",
+  "use_dolphin": false,
+  "use_low_ram": false,
+  "wallpaper_name": "CelWeave Yellow.png",
+  "wallpaper_tint": 65,
+  "glass_opacity": 82,
+  "window_width": 1440,
+  "window_height": 749,
+  "splitter_sizes": [
+    395,
+    629,
+    380
+  ]
+}

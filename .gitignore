@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions & build artifacts
+build/
+dist/
+*.dist/
+*.build/
+*.onefile-build/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Large model weights (Stable Diffusion / GGUF)
+*.safetensors
+*.gguf
+*.bin
+*.pt
+*.ckpt
+*.onnx
+
+# Compressed archives
+*.zip
+*.tar.gz
+*.7z
+
+# Scratch & backups
+Old Versions/
+cel_settings (copy).json
