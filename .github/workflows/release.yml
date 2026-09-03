@@ -51,16 +51,15 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka zstandard
 
-      - name: Build Standalone and OneFile Packages
+      - name: Build Standalone Distribution Package
         run: |
-          python build_nuitka.py --run=both
+          python build_nuitka.py --run=standalone
 
       - name: Upload Release Binaries
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           files: |
-            dist/*_onefile*
             dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
