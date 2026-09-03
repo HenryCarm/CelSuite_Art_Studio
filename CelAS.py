@@ -17,33 +17,51 @@ import threading
 import subprocess
 from pathlib import Path
 
-# ─── UNLEASH MAXIMUM CPU THREADS (HENNY'S FULL SPEED BEAST MODE) ──────────────
+# ─── MAXIMUM CPU THREADS (HENNY'S FULL SPEED BEAST MODE) ──────────────────────
 torch_threads = multiprocessing.cpu_count()
 os.environ["OMP_NUM_THREADS"] = str(torch_threads)
 os.environ["MKL_NUM_THREADS"] = str(torch_threads)
 
-import torch
-torch.set_num_threads(torch_threads)
 from PIL import Image, ImageGrab, ImageOps
 
-# ─── FUTURE-PROOF MONKEY PATCH FOR TRANSFORMERS 5.6+ ──────────────────────────
+# ─── DUAL AI INFERENCE ENGINE: PYTORCH (UNIVERSAL) vs SD.CPP (INTEL AVX2) ────
 try:
-    import transformers
-    from packaging import version
-    if version.parse(transformers.__version__) >= version.parse("5.6"):
-        from transformers import CLIPTextModel
-        CLIPTextModel.text_model = property(lambda self: self)
-except Exception:
-    pass
+    import torch
+    torch.set_num_threads(torch_threads)
+    from diffusers import (
+        StableDiffusionPipeline,
+        StableDiffusionImg2ImgPipeline,
+        EulerAncestralDiscreteScheduler,
+        DPMSolverMultistepScheduler,
+        DDIMScheduler
+    )
+    HAS_TORCH = True
+except ImportError:
+    torch = None
+    StableDiffusionPipeline = None
+    StableDiffusionImg2ImgPipeline = None
+    EulerAncestralDiscreteScheduler = None
+    DPMSolverMultistepScheduler = None
+    DDIMScheduler = None
+    HAS_TORCH = False
 
-# ─── DIFFUSERS ────────────────────────────────────────────────────────────────
-from diffusers import (
-    StableDiffusionPipeline,
-    StableDiffusionImg2ImgPipeline,
-    EulerAncestralDiscreteScheduler,
-    DPMSolverMultistepScheduler,
-    DDIMScheduler
-)
+try:
+    import stable_diffusion_cpp
+    HAS_SDCPP = True
+except ImportError:
+    stable_diffusion_cpp = None
+    HAS_SDCPP = False
+
+# ─── FUTURE-PROOF MONKEY PATCH FOR TRANSFORMERS 5.6+ ──────────────────────────
+if HAS_TORCH:
+    try:
+        import transformers
+        from packaging import version
+        if version.parse(transformers.__version__) >= version.parse("5.6"):
+            from transformers import CLIPTextModel
+            CLIPTextModel.text_model = property(lambda self: self)
+    except Exception:
+        pass
 
 # ─── LLAMA-CPP (DOLPHIN AI AUTO-PROMPTING) ────────────────────────────────────
 try:
@@ -151,17 +169,19 @@ class SDWorkerThread(QThread):
             self.sig_error.emit("AI Brain is not loaded! Load checkpoint first.")
             return
 
-        batch_size = self.p["batch_size"]
-        self.sig_log.emit(f"\n--- INITIATING BATCH OF {batch_size} (CPU FULL BEAST MODE 🚀🔥) ---")
+        is_sdcpp = (self.pipe_holder.get("engine") == "sdcpp")
+        engine_label = "Intel SD.cpp AVX2 ⚡" if is_sdcpp else "PyTorch Universal 🎨"
+        self.sig_log.emit(f"\n--- INITIATING BATCH OF {batch_size} ({engine_label} - FULL BEAST MODE 🚀🔥) ---")
 
         try:
             sampler = self.p["sampler"]
-            if sampler == "Euler A":
-                pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(pipe.scheduler.config)
-            elif sampler == "DPM++ 2M":
-                pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-            elif sampler == "DDIM":
-                pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
+            if not is_sdcpp and HAS_TORCH:
+                if sampler == "Euler A":
+                    pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(pipe.scheduler.config)
+                elif sampler == "DPM++ 2M":
+                    pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+                elif sampler == "DDIM":
+                    pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
 
             prompt = self.p["prompt"]
             neg_prompt = self.p["neg_prompt"]
@@ -230,7 +250,31 @@ class SDWorkerThread(QThread):
                         raise Exception("Killed! 🛑")
                     self.sig_log.emit(f"👨‍🍳 Step {step+1}/{steps}...")
 
-                if base_img_path and os.path.exists(base_img_path):
+                if is_sdcpp:
+                    self.sig_log.emit("⚡ Processing image with pure C++ Intel AVX2 Engine...")
+                    if base_img_path and os.path.exists(base_img_path):
+                        raw_img = Image.open(base_img_path).convert("RGB")
+                        img_input = ImageOps.fit(raw_img, (w, h), Image.Resampling.LANCZOS)
+                        imgs = pipe.img_to_img(
+                            image=img_input,
+                            prompt=prompt,
+                            negative_prompt=neg_prompt,
+                            cfg_scale=c,
+                            sample_steps=steps,
+                            seed=actual_seed
+                        )
+                    else:
+                        imgs = pipe.txt_to_img(
+                            prompt=prompt,
+                            negative_prompt=neg_prompt,
+                            width=w,
+                            height=h,
+                            cfg_scale=c,
+                            sample_steps=steps,
+                            seed=actual_seed
+                        )
+                    result = imgs[0] if isinstance(imgs, list) else imgs
+                elif base_img_path and os.path.exists(base_img_path):
                     if not isinstance(pipe, StableDiffusionImg2ImgPipeline):
                         self.sig_log.emit("🔄 Switching pipeline to Img2Img mode...")
                         pipe = StableDiffusionImg2ImgPipeline(
@@ -1454,30 +1498,46 @@ class CelStudioWindow(QMainWindow):
     def _bg_load_model(self):
         self.is_loading_brain = True
         try:
-            self.log_console(f"🧠 Loading SD checkpoint into CPU memory...")
-            pipe = StableDiffusionPipeline.from_single_file(
-                self.model_path,
-                safety_checker=None,
-                requires_safety_checker=False,
-                torch_dtype=torch.float32,
-                local_files_only=True
-            ).to("cpu")
+            if HAS_TORCH:
+                self.log_console(f"🧠 Loading SD checkpoint into CPU memory (Universal PyTorch Engine)...")
+                pipe = StableDiffusionPipeline.from_single_file(
+                    self.model_path,
+                    safety_checker=None,
+                    requires_safety_checker=False,
+                    torch_dtype=torch.float32,
+                    local_files_only=True
+                ).to("cpu")
 
-            if self.chk_low_ram.isChecked():
-                pipe.enable_attention_slicing()
-                self.log_console("🫧 Low RAM attention-slicing engaged!")
+                if self.chk_low_ram.isChecked():
+                    pipe.enable_attention_slicing()
+                    self.log_console("🫧 Low RAM attention-slicing engaged!")
 
-            if self.lora_path and os.path.exists(self.lora_path):
-                try:
-                    pipe.load_lora_weights(self.lora_path)
-                    self.log_console("🎀 Active LoRA weights loaded into brain!")
-                except Exception as le:
-                    self.log_console(f"LoRA Load error: {le}")
+                if self.lora_path and os.path.exists(self.lora_path):
+                    try:
+                        pipe.load_lora_weights(self.lora_path)
+                        self.log_console("🎀 Active LoRA weights loaded into brain!")
+                    except Exception as le:
+                        self.log_console(f"LoRA Load error: {le}")
 
-            self.pipe_holder["pipe"] = pipe
-            self.btn_load_model.setText("Brain Ready! 🧠✨")
-            self.btn_load_model.setStyleSheet(f"background: {AMBER_GOLD}; color: #000000; font-weight: bold;")
-            self.log_console("✅ AI Brain loaded and ready to cook! 🚀🔥")
+                self.pipe_holder["pipe"] = pipe
+                self.pipe_holder["engine"] = "diffusers"
+                self.btn_load_model.setText("Brain Ready! 🧠✨")
+                self.btn_load_model.setStyleSheet(f"background: {AMBER_GOLD}; color: #000000; font-weight: bold;")
+                self.log_console("✅ Universal AI Brain loaded and ready to cook! 🚀🔥")
+            elif HAS_SDCPP:
+                self.log_console(f"⚡ Loading SD checkpoint into Intel SD.cpp AVX2 Engine...")
+                pipe = stable_diffusion_cpp.StableDiffusion(
+                    model_path=self.model_path,
+                    n_threads=torch_threads,
+                    verbose=False
+                )
+                self.pipe_holder["pipe"] = pipe
+                self.pipe_holder["engine"] = "sdcpp"
+                self.btn_load_model.setText("Brain Ready (SD.cpp)! ⚡")
+                self.btn_load_model.setStyleSheet(f"background: {AMBER_GOLD}; color: #000000; font-weight: bold;")
+                self.log_console("✅ Intel SD.cpp AVX2 Brain loaded and ready to cook! ⚡🔥")
+            else:
+                raise RuntimeError("Neither PyTorch nor stable-diffusion-cpp is available!")
         except Exception as e:
             self.log_console(f"🛑 Brain Load Failed: {e}")
             self.btn_load_model.setText("Load SD Checkpoint 🔮")
