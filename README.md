@@ -59,6 +59,6 @@ All desktop distributions are built in the cloud via GitHub Actions. Choose betw
 
 <div align="center">
 
-<img src="banner_green.webp" alt="CelSuite Footer Banner" width="100%" style="border-radius: 14px; max-width: 820px;" />
+<img src="Cel_Banner_Footer_Long_CelAS_compressed.jpeg" alt="Cel_Banner_Footer_Long_CelAS_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
 
 </div>
