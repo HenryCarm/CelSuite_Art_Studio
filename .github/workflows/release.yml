@@ -88,12 +88,12 @@ jobs:
           name: CelSuite Art Studio - Liquid Glass Yellow Edition ${{ github.ref_name }}
           body: |
             <div align="center">
-            <img src="https://raw.githubusercontent.com/HenryCarm/CelSuite_Art_Studio/main/banner.webp" width="100%" style="border-radius: 14px; max-width: 820px;" />
+            <img src="https://raw.githubusercontent.com/HenryCarm/CelSuite_Art_Studio/main/Cel_Banner_Head_CelAS_High_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
             </div>
 
             # CelSuite Art Studio — Release ${{ github.ref_name }}
 
-            Official multi-platform offline generative AI studio featuring Liquid Glass Yellow design, multi-threaded CPU acceleration, and instant zero-setup inference.
+            Official multi-platform offline generative AI studio featuring Liquid Glass Yellow design, multi-threaded CPU acceleration, dual-engine backend (Universal PyTorch + Intel SD.cpp AVX2), and instant zero-setup inference.
 
             ---
 
@@ -113,7 +113,9 @@ jobs:
             | 🪟 **Windows** | Intel (AVX2 Ultra-Light) | `.7z` | Ultra LZMA2 | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Windows-Intel.7z) |
 
             ---
-            *Built with Nuitka & PySide6 LGPL.*
+            <div align="center">
+            <img src="https://raw.githubusercontent.com/HenryCarm/CelSuite_Art_Studio/main/Cel_Banner_Footer_Long_CelAS_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
+            </div>
           files: |
             dist/*.zip
             dist/*.7z

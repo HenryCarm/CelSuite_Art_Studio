@@ -1,36 +1,38 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
-# C extensions & build artifacts
-build/
-dist/
-*.dist/
-*.build/
-*.onefile-build/
-
-# Environments
-.env
-.venv
+.Python
 env/
 venv/
-ENV/
+.venv/
+build/
+dist/
+*.build/
+*.dist/
 
-# Large model weights (Stable Diffusion / GGUF)
-*.safetensors
-*.gguf
-*.bin
-*.pt
-*.ckpt
-*.onnx
+# Logs & temp
+*.log
+*.bak
+*.tmp
+nuitka-crash-report.xml
 
-# Compressed archives
-*.zip
-*.tar.gz
-*.7z
+# Configs & internal settings (Never push to GitHub)
+*.json
 
-# Scratch & backups
-Old Versions/
-cel_settings (copy).json
+# Closed-source project code & build specs (Strict leak protection)
+*.py
+*.xml
+*.txt
+requirements.txt
+build_nuitka.py
+
+# Media files (Only keep official README banners and icon)
+*.png
+*.jpg
+*.ico
+*.mp4
+!icon.webp
+!Cel_Banner_Head_CelAS_High_compressed.jpeg
+!Cel_Banner_Footer_Long_CelAS_compressed.jpeg

@@ -31,7 +31,7 @@
 
 All desktop distributions are built in the cloud via GitHub Actions. Choose between **Universal** (all AMD/Intel CPUs via PyTorch) or **Intel** (ultra-lightweight pure C++ `stable-diffusion.cpp` engine).
 
-👉 **[Download the Latest Release (v269.2.0)](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/latest)**
+👉 **[Download the Latest Release (v269.4.0)](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/latest)**
 
 | Platform | Edition | Format | Compression | Description |
 | :--- | :--- | :--- | :--- | :--- |
