@@ -27,6 +27,7 @@ nuitka-crash-report.xml
 *.txt
 requirements.txt
 build_nuitka.py
+build_nuitka_github.py
 
 # Media files (Only keep official README banners and icon)
 *.png
