@@ -14,13 +14,9 @@
 <br/><br/>
 
 <img src="Cel_Banner_Head_CelAS_High_compressed.jpeg" alt="Cel_Banner_Head_CelAS_High_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
-
 <br/>
-
 </div>
-
 ---
-
 ## 🌟 Overview
 
 **CelSuite — Art Studio (CelAS)** is an offline, privacy-first generative AI studio designed to run directly on standard CPU hardware without needing expensive cloud GPUs. Featuring custom amber-yellow glass aesthetics, interactive Prompt Auto-Fit expansion, real-time batch evolution, bicubic taskbar icons, and a stealth panic disguise mode (`Ctrl+Space`).
