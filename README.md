@@ -13,7 +13,7 @@
 
 <br/><br/>
 
-<img src="banner.webp" alt="CelSuite Banner Logo" width="100%" style="border-radius: 14px; max-width: 820px;" />
+<img src="Cel_Banner_Head_CelAS_High_compressed.jpeg" alt="Cel_Banner_Head_CelAS_High_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
 
 <br/>
 
