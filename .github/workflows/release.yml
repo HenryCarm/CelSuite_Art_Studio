@@ -102,13 +102,9 @@ jobs:
 
             | Platform | Edition | Format | Compression | Download |
             | :--- | :--- | :--- | :--- | :--- |
-            | 🐧 **Linux** | Universal (All CPUs) | `.zip` | Standard Deflate | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Linux-Universal.zip) |
             | 🐧 **Linux** | Universal (All CPUs) | `.7z` | Ultra LZMA2 | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Linux-Universal.7z) |
-            | 🐧 **Linux** | Intel (AVX2 Ultra-Light) | `.zip` | Standard Deflate | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Linux-Intel.zip) |
             | 🐧 **Linux** | Intel (AVX2 Ultra-Light) | `.7z` | Ultra LZMA2 | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Linux-Intel.7z) |
-            | 🪟 **Windows** | Universal (All CPUs) | `.zip` | Standard Deflate | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Windows-Universal.zip) |
             | 🪟 **Windows** | Universal (All CPUs) | `.7z` | Ultra LZMA2 | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Windows-Universal.7z) |
-            | 🪟 **Windows** | Intel (AVX2 Ultra-Light) | `.zip` | Standard Deflate | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Windows-Intel.zip) |
             | 🪟 **Windows** | Intel (AVX2 Ultra-Light) | `.7z` | Ultra LZMA2 | [Download](https://github.com/HenryCarm/CelSuite_Art_Studio/releases/download/${{ github.ref_name }}/CelSuite_ArtStudio-Windows-Intel.7z) |
 
             ---
@@ -116,7 +112,6 @@ jobs:
             <img src="https://raw.githubusercontent.com/HenryCarm/CelSuite_Art_Studio/main/Cel_Banner_Footer_Long_CelAS_compressed.jpeg" width="100%" style="border-radius: 14px; max-width: 820px;" />
             </div>
           files: |
-            dist/*.zip
             dist/*.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
