@@ -1,0 +1,23 @@
+name: Sync Release Artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Transfer .7z Artifacts to Latest Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p assets
+          cd assets
+          gh release download v269.4.0 --pattern "*.7z" --repo ${{ github.repository }}
+          ls -lh
+          gh release upload v269.18.0 *.7z --clobber --repo ${{ github.repository }}
+          gh release edit v269.18.0 --latest --repo ${{ github.repository }}
+          echo "Successfully synced all .7z artifacts to v269.18.0 in the cloud!"

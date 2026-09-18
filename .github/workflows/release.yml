@@ -1,9 +1,6 @@
 name: CelSuite Art Studio Multi-Platform Release
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:
